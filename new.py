@@ -47,11 +47,3 @@ for  author_key in multi_author_del:
             Author_Univ_Year[i].setdefault(j,[])
             Author_Univ_Year[i][j].append(year)
 
-#for  author_key in multi_author_del:
-    #del Author_Univ_Year[author_key]
-        
-    
-
-
-                
-Author_Univ_Year
