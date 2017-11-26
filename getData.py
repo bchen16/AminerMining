@@ -1,8 +1,5 @@
 import sys
 
-
-
-
 with open('AMiner-Author.txt','r') as f:
 	lines = list(f.readlines())
 d = {}
