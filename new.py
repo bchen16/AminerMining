@@ -46,4 +46,5 @@ for  author_key in multi_author_del:
             Author_Univ_Year.setdefault(i,{})
             Author_Univ_Year[i].setdefault(j,[])
             Author_Univ_Year[i][j].append(year)
-
+for author_key in multi_author_del:
+	Author_Univ_Year.pop(author_key,None)
