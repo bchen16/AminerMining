@@ -20,8 +20,11 @@ Author_University_Raw = {}
     #affiliation:[('string' university raw name,'int' year)]
 Author_Univ_Year={}
 
+
+
 #Loading author information from Aminer-Author.txt, omitting those without affiliation
 i = 0
+count = 0
 while(i < len(Alines)):
     key = ''
     affiliation  = ''
@@ -31,7 +34,16 @@ while(i < len(Alines)):
             key = key[:-1]
             affiliation = Alines[i+2][3:]
             if len(affiliation)>3:
-                Author_University_Raw[key] = affiliation
+                j = 0
+                while(True):
+                    try:
+                        x = Author_University_Raw[(key,j)]
+                        j = j + 1
+                    except KeyError:
+                        Author_University_Raw[(key,j)] = affiliation 
+                        if j == 0:
+                            count = count + 1
+                        break
             i = i + 9       
         else:
             i = i + 1
@@ -40,11 +52,11 @@ while(i < len(Alines)):
     if i%2500000 == 0:
         print(len(Author_University_Raw))
 
-print('Total author loaded with affiliation(s):' + str(len(Author_University_Raw)))
+print('Total author loaded with affiliation(s):' + str(count))
 print('Printing 10 random authors in raw author data:')
 for i in range(0,10):
     x = random.randint(0,834938)
-    print('|---' + str(list(Author_University_Raw.keys())[x]) +' '+ str(list(Author_University_Raw.values())[x]))    
+    print('|------- Name:' + str(list(Author_University_Raw.keys())[x]) +' Affiliations:'+ str(list(Author_University_Raw.values())[x]))    
 print()
  
 #Loading author information from Aminer-Paper.txt, pairing with chronical information
@@ -74,13 +86,17 @@ while(i+3 < len(lines)):
         for ind in range(0,len(authors)):
             if len(authors) != len(affiliations):
                 break
-            try:
-                if affiliations[ind] in Author_University_Raw[authors[ind]]:
-                    valid = valid + 1
-                else:
-                    invalid = inValid + 1
-            except KeyError:
-                pass
+            j = 0
+            while(True):
+                try:
+                    if affiliations[ind] in Author_University_Raw[(authors[ind],j)]:
+                        valid = valid + 1
+                        break
+                    else:    
+                        j = j + 1
+                except KeyError:
+                    inValid = inValid + 1
+                    break
     else:
         i = i + 1 
     if i%2500000 == 0:
