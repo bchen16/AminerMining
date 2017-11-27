@@ -1,4 +1,5 @@
 import sys
+import random
 
 print('Loading Aminer-Paper.txt')
 with open('Aminer-Paper.txt','r') as f:
@@ -27,6 +28,7 @@ while(i < len(Alines)):
     if  len(Alines[i]) > 6:
         if Alines[i][1] == 'i' and Alines[i][2] == 'n' and Alines[i][3] == 'd' and Alines[i][4] == 'e' and Alines[i][5] == 'x':
             key = Alines[i+1][3:]
+            key = key[:-1]
             affiliation = Alines[i+2][3:]
             if len(affiliation)>3:
                 Author_University_Raw[key] = affiliation
@@ -39,22 +41,51 @@ while(i < len(Alines)):
         print(len(Author_University_Raw))
 
 print('Total author loaded with affiliation(s):' + str(len(Author_University_Raw)))
-
+print('Printing 10 random authors in raw author data:')
+for i in range(0,10):
+    x = random.randint(0,834938)
+    print('|---' + str(list(Author_University_Raw.keys())[x]) +' '+ str(list(Author_University_Raw.values())[x]))    
+print()
+ 
 #Loading author information from Aminer-Paper.txt, pairing with chronical information
+valid = 0
+inValid = 0
 i = 0
 while(i+3 < len(lines)):
     key = ''
     currU = ''
-    affiliation = []
+    
     if len(lines[i])<6:
         i = i + 1
     elif lines[i][1] == 'i' and lines[i][2] == 'n' and lines[i][3] == 'd' and lines[i][4] == 'e' and lines[i][5] == 'x':
         key = lines[i+2][3:]
         currU = lines[i+3][3:]
         i = i + 5
+        # if ; in names, which means there are 2 more authors in this paper    
+        if ';' in key:
+            authors = key.split(';')
+            affiliations = currU.split(';')
+        # only one author        
+        else:
+            authors = [key]
+            affiliations = [currU]
+        authors[-1] = authors[-1][:-1]
+        affiliations[-1] = affiliations[-1][:-1]
+        for ind in range(0,len(authors)):
+            if len(authors) != len(affiliations):
+                break
+            try:
+                if affiliations[ind] in Author_University_Raw[authors[ind]]:
+                    valid = valid + 1
+                else:
+                    invalid = inValid + 1
+            except KeyError:
+                pass
     else:
         i = i + 1 
     if i%2500000 == 0:
         print(i)
 print(i)
 
+print('Total amount valid authors in paper is:' + str(valid))
+print('Total amount invalid authors in paper is:' + str(inValid))
