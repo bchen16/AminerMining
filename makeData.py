@@ -66,10 +66,14 @@ i = 0
 while(i+3 < len(lines)):
     key = ''
     currU = ''
-    
+    #Read from the lines as blocks, starting from '#index'(decrease running time)
+    #Abort if length < 6 (cannot be data)    
     if len(lines[i])<6:
         i = i + 1
+    #Keep going if the line is index
     elif lines[i][1] == 'i' and lines[i][2] == 'n' and lines[i][3] == 'd' and lines[i][4] == 'e' and lines[i][5] == 'x':
+        #key: author name
+        #currU: affiliations
         key = lines[i+2][3:]
         currU = lines[i+3][3:]
         # if ; in names, which means there are 2 more authors in this paper    
@@ -80,27 +84,30 @@ while(i+3 < len(lines)):
         else:
             authors = [key]
             affiliations = [currU]
+        # elimintate '\n'
         authors[-1] = authors[-1][:-1]
         affiliations[-1] = affiliations[-1][:-1]
+        #Add infromation to dictionary
         for ind in range(0,len(authors)):
             if len(authors) != len(affiliations):
                 break
             j = 0
             while(True):
                 yr = lines[i+4][3:len(lines[i+4])-1]
-                #else:
-                #    inValid = inValid + 1
-                #    break
                 try:
+                    #Test if the affiliation read in paper exist in Author_Raw dictionary
                     if affiliations[ind] in Author_University_Raw[(authors[ind],j)]:
                         valid = valid + 1
                         try:
+                            #if author exists, add to end
                             Author_Univ_Year[(authors[ind],j)].append((affiliations[ind],yr))
                         except KeyError:
+                            #if author does not exist, creat
                             Author_Univ_Year[(authors[ind],j)] = [(affiliations[ind],yr)]
                         break
                     else:    
                         j = j + 1
+                # The author does not even exist
                 except KeyError:
                     inValid = inValid + 1
                     break
@@ -115,7 +122,7 @@ print('Total amount valid authors in paper is:' + str(len(Author_Univ_Year)))
 print('Total amount invalid authors in paper is:' + str(inValid))
 
 print('Printing 10 random authors in corrected author data:')
-for i in range(0,10):
+for i in range(0,1000):
     x = random.randint(0,len(Author_Univ_Year)-1) 
     print('|------- Name:' + str(list(Author_Univ_Year.keys())[x]) +'\n'+ str(list(Author_Univ_Year.values())[x]))
 print()
